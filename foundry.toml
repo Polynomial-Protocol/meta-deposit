@@ -5,3 +5,6 @@ libs = ['lib']
 
 [rpc_endpoints]
 optimism = "${OPTIMISM_RPC_URL}"
+
+[fuzz]
+FOUNDRY_FUZZ_RUNS = 100
