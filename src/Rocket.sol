@@ -7,6 +7,8 @@ import {IPolynomialVault} from "./interfaces/IPolynomialVault.sol";
 contract Rocket {
     bytes32 public immutable salt;
 
+    address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+
     constructor(bytes32 _salt) {
         salt = _salt;
     }
@@ -19,7 +21,7 @@ contract Rocket {
         uint256 amount,
         address swapTarget,
         bytes memory swapData
-    ) external payable {
+    ) external {
         require(
             salt ==
                 keccak256(
@@ -42,8 +44,16 @@ contract Rocket {
                 "INVALID_REQUEST"
             );
 
-            IERC20(incomingToken).approve(swapTarget, amount);
-            (bool success, ) = swapTarget.call(swapData);
+            uint256 msgValue;
+
+            if (incomingToken == ETH) {
+                msgValue = address(this).balance;
+                require(msgValue == amount, "INVALID_BALANCE");
+            } else {
+                IERC20(incomingToken).approve(swapTarget, amount);
+            }
+
+            (bool success, ) = swapTarget.call{value: msgValue}(swapData);
             require(success);
         }
 
