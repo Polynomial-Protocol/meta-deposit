@@ -7,7 +7,7 @@ import {console2} from "forge-std/console2.sol";
 import {Rocket} from "../src/Rocket.sol";
 import {RocketFactory} from "../src/RocketFactory.sol";
 import {IERC20} from "../src/interfaces/IERC20.sol";
-import { IPolynomialVault } from "../src/interfaces/IPolynomialVault.sol";
+import {IPolynomialVault} from "../src/interfaces/IPolynomialVault.sol";
 
 import {ICurveMetaPool} from "./interfaces/ICurveMetaPool.sol";
 
@@ -39,7 +39,9 @@ contract RocketPutSellingTest is Test {
         IPolynomialVault vault = IPolynomialVault(SETH_PUT_SELLING);
 
         uint256 nextDepositId = vault.nextQueuedDepositId();
-        IPolynomialVault.QueuedDeposit memory lastQueued = vault.depositQueue(--nextDepositId);
+        IPolynomialVault.QueuedDeposit memory lastQueued = vault.depositQueue(
+            --nextDepositId
+        );
 
         assertEq(lastQueued.user, depositedUser);
         assertGt(lastQueued.depositedAmount, 0);
@@ -83,43 +85,43 @@ contract RocketPutSellingTest is Test {
         assertDepositQueue(user);
     }
 
-    // function testSimple(uint256 amount) public {
-    //     vm.assume(amount > 5e19 && amount < 1e24);
-    //     address predictedAddress = rocketFactory.getAddressFor(
-    //         SUSD,
-    //         SUSD,
-    //         SETH_PUT_SELLING,
-    //         user,
-    //         amount,
-    //         address(0x0),
-    //         ""
-    //     );
+    function testSimple(uint256 amount) public {
+        vm.assume(amount > 5e19 && amount < 1e24);
+        address predictedAddress = rocketFactory.getAddressFor(
+            SUSD,
+            SUSD,
+            SETH_PUT_SELLING,
+            user,
+            amount,
+            address(0x0),
+            ""
+        );
 
-    //     vm.prank(SUSD_HOLDER);
-    //     IERC20(SUSD).transfer(predictedAddress, amount);
+        vm.prank(SUSD_HOLDER);
+        IERC20(SUSD).transfer(predictedAddress, amount);
 
-    //     address newRocket = rocketFactory.deploy(
-    //         SUSD,
-    //         SUSD,
-    //         SETH_PUT_SELLING,
-    //         user,
-    //         amount,
-    //         address(0x0),
-    //         ""
-    //     );
+        address newRocket = rocketFactory.deploy(
+            SUSD,
+            SUSD,
+            SETH_PUT_SELLING,
+            user,
+            amount,
+            address(0x0),
+            ""
+        );
 
-    //     Rocket(newRocket).launch(
-    //         SUSD,
-    //         SUSD,
-    //         SETH_PUT_SELLING,
-    //         user,
-    //         amount,
-    //         address(0x0),
-    //         ""
-    //     );
+        Rocket(newRocket).launch(
+            SUSD,
+            SUSD,
+            SETH_PUT_SELLING,
+            user,
+            amount,
+            address(0x0),
+            ""
+        );
 
-    //     assertDepositQueue(user);
-    // }
+        assertDepositQueue(user);
+    }
 
     function testCurveDai() public {
         uint256 amount = 1e21; // 1000 DAI
@@ -215,52 +217,52 @@ contract RocketPutSellingTest is Test {
         assertDepositQueue(user);
     }
 
-    // function testCurveUsdc(uint256 amount) public {
-    //     vm.assume(amount > 5e7 && amount < 1e12);
-    //     // USDC = index 2, SUSD = index 0
-    //     bytes memory swapData = abi.encodeWithSelector(
-    //         ICurveMetaPool.exchange_underlying.selector,
-    //         2,
-    //         0,
-    //         amount,
-    //         0
-    //     );
+    function testCurveUsdc(uint256 amount) public {
+        vm.assume(amount > 5e7 && amount < 1e12);
+        // USDC = index 2, SUSD = index 0
+        bytes memory swapData = abi.encodeWithSelector(
+            ICurveMetaPool.exchange_underlying.selector,
+            2,
+            0,
+            amount,
+            0
+        );
 
-    //     address predictedAddress = rocketFactory.getAddressFor(
-    //         USDC,
-    //         SUSD,
-    //         SETH_PUT_SELLING,
-    //         user,
-    //         amount,
-    //         address(CURVE_SUSD_METAPOOL),
-    //         swapData
-    //     );
+        address predictedAddress = rocketFactory.getAddressFor(
+            USDC,
+            SUSD,
+            SETH_PUT_SELLING,
+            user,
+            amount,
+            address(CURVE_SUSD_METAPOOL),
+            swapData
+        );
 
-    //     vm.prank(USDC_HOLDER);
-    //     IERC20(USDC).transfer(predictedAddress, amount);
+        vm.prank(USDC_HOLDER);
+        IERC20(USDC).transfer(predictedAddress, amount);
 
-    //     address newRocket = rocketFactory.deploy(
-    //         USDC,
-    //         SUSD,
-    //         SETH_PUT_SELLING,
-    //         user,
-    //         amount,
-    //         address(CURVE_SUSD_METAPOOL),
-    //         swapData
-    //     );
+        address newRocket = rocketFactory.deploy(
+            USDC,
+            SUSD,
+            SETH_PUT_SELLING,
+            user,
+            amount,
+            address(CURVE_SUSD_METAPOOL),
+            swapData
+        );
 
-    //     Rocket(newRocket).launch(
-    //         USDC,
-    //         SUSD,
-    //         SETH_PUT_SELLING,
-    //         user,
-    //         amount,
-    //         address(CURVE_SUSD_METAPOOL),
-    //         swapData
-    //     );
+        Rocket(newRocket).launch(
+            USDC,
+            SUSD,
+            SETH_PUT_SELLING,
+            user,
+            amount,
+            address(CURVE_SUSD_METAPOOL),
+            swapData
+        );
 
-    //     assertDepositQueue(user);
-    // }
+        assertDepositQueue(user);
+    }
 
     function testCruveUsdt() public {
         uint256 amount = 1e9; // 1000 USDT
