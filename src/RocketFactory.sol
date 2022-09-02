@@ -4,6 +4,21 @@ pragma solidity ^0.8.9;
 import {Rocket} from "./Rocket.sol";
 
 contract RocketFactory {
+    address public owner;
+
+    constructor(address _owner) {
+        owner = _owner;
+    }
+
+    modifier requiresAuth() {
+        require(owner == msg.sender, "UNAUTHORIZED");
+        _;
+    }
+
+    function setOwner(address newOwner) public virtual requiresAuth {
+        owner = newOwner;
+    }
+
     function deploy(
         address incomingToken,
         address depositToken,

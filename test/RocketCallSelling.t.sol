@@ -28,7 +28,7 @@ contract RocketCallSellingTest is Test {
 
     function setUp() public {
         optimismFork = vm.createSelectFork(vm.rpcUrl("optimism"), 21510000);
-        rocketFactory = new RocketFactory();
+        rocketFactory = new RocketFactory(msg.sender);
     }
 
     function assertDepositQueue(address depositedUser) internal {
