@@ -62,7 +62,7 @@ contract RocketPutSellingTest is Test {
         vm.prank(SUSD_HOLDER);
         IERC20(SUSD).transfer(predictedAddress, amount);
 
-        address newRocket = rocketFactory.deploy(
+        address payable newRocket = rocketFactory.deploy(
             SUSD,
             SUSD,
             SETH_PUT_SELLING,
@@ -100,7 +100,7 @@ contract RocketPutSellingTest is Test {
         vm.prank(SUSD_HOLDER);
         IERC20(SUSD).transfer(predictedAddress, amount);
 
-        address newRocket = rocketFactory.deploy(
+        address payable newRocket = rocketFactory.deploy(
             SUSD,
             SUSD,
             SETH_PUT_SELLING,
@@ -147,7 +147,7 @@ contract RocketPutSellingTest is Test {
         vm.prank(DAI_HOLDER);
         IERC20(DAI).transfer(predictedAddress, amount);
 
-        address newRocket = rocketFactory.deploy(
+        address payable newRocket = rocketFactory.deploy(
             DAI,
             SUSD,
             SETH_PUT_SELLING,
@@ -194,7 +194,7 @@ contract RocketPutSellingTest is Test {
         vm.prank(USDC_HOLDER);
         IERC20(USDC).transfer(predictedAddress, amount);
 
-        address newRocket = rocketFactory.deploy(
+        address payable newRocket = rocketFactory.deploy(
             USDC,
             SUSD,
             SETH_PUT_SELLING,
@@ -241,7 +241,7 @@ contract RocketPutSellingTest is Test {
         vm.prank(USDC_HOLDER);
         IERC20(USDC).transfer(predictedAddress, amount);
 
-        address newRocket = rocketFactory.deploy(
+        address payable newRocket = rocketFactory.deploy(
             USDC,
             SUSD,
             SETH_PUT_SELLING,
@@ -288,7 +288,7 @@ contract RocketPutSellingTest is Test {
         vm.prank(USDT_HOLDER);
         IERC20(USDT).transfer(predictedAddress, amount);
 
-        address newRocket = rocketFactory.deploy(
+        address payable newRocket = rocketFactory.deploy(
             USDT,
             SUSD,
             SETH_PUT_SELLING,

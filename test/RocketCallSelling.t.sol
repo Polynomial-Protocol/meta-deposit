@@ -59,7 +59,7 @@ contract RocketCallSellingTest is Test {
         vm.prank(SETH_HOLDER);
         IERC20(SETH).transfer(predictedAddress, amount);
 
-        address newRocket = rocketFactory.deploy(
+        address payable newRocket = rocketFactory.deploy(
             SETH,
             SETH,
             SETH_CALL_SELLING,
@@ -98,7 +98,7 @@ contract RocketCallSellingTest is Test {
         vm.prank(SETH_HOLDER);
         IERC20(SETH).transfer(predictedAddress, amount);
 
-        address newRocket = rocketFactory.deploy(
+        address payable newRocket = rocketFactory.deploy(
             SETH,
             SETH,
             SETH_CALL_SELLING,
@@ -146,7 +146,7 @@ contract RocketCallSellingTest is Test {
         vm.prank(ETH_HOLDER);
         predictedAddress.call{value: amount}("");
 
-        address newRocket = rocketFactory.deploy(
+        address payable newRocket = rocketFactory.deploy(
             ETH,
             SETH,
             SETH_CALL_SELLING,
@@ -194,7 +194,7 @@ contract RocketCallSellingTest is Test {
         vm.prank(ETH_HOLDER);
         predictedAddress.call{value: amount}("");
 
-        address newRocket = rocketFactory.deploy(
+        address payable newRocket = rocketFactory.deploy(
             ETH,
             SETH,
             SETH_CALL_SELLING,

@@ -5,6 +5,8 @@ import {Rocket} from "./Rocket.sol";
 
 contract RocketFactory {
     address public owner;
+    mapping(address => address) public hTokens;
+    mapping(address => address) public hSwaps;
 
     constructor(address _owner) {
         owner = _owner;
@@ -27,7 +29,7 @@ contract RocketFactory {
         uint256 amount,
         address swapTarget,
         bytes memory swapData
-    ) public payable returns (address) {
+    ) public payable returns (address payable) {
         bytes32 uniqueSalt = keccak256(
             abi.encode(
                 incomingToken,
@@ -39,7 +41,7 @@ contract RocketFactory {
                 swapData
             )
         );
-        return address(new Rocket{salt: uniqueSalt}(uniqueSalt));
+        return payable(new Rocket{salt: uniqueSalt}(uniqueSalt));
     }
 
     function getAddressFor(
