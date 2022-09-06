@@ -71,6 +71,14 @@ contract Rocket {
         }
 
         uint256 depositAmount = IERC20(depositToken).balanceOf(address(this));
+        (address feeReceipient, uint256 fee) = factory.getFee(
+            depositToken,
+            depositAmount
+        );
+        if (fee > 0) {
+            IERC20(depositToken).transfer(feeReceipient, fee);
+            depositAmount -= fee;
+        }
         IERC20(depositToken).approve(vault, depositAmount);
         IPolynomialVault(vault).initiateDeposit(user, depositAmount);
     }
@@ -124,6 +132,14 @@ contract Rocket {
         require(success);
 
         uint256 depositAmount = IERC20(depositToken).balanceOf(address(this));
+        (address feeReceipient, uint256 fee) = factory.getFee(
+            depositToken,
+            depositAmount
+        );
+        if (fee > 0) {
+            IERC20(depositToken).transfer(feeReceipient, fee);
+            depositAmount -= fee;
+        }
         IERC20(depositToken).approve(vault, depositAmount);
         IPolynomialVault(vault).initiateDeposit(user, depositAmount);
     }
