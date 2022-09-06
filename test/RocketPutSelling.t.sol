@@ -8,6 +8,7 @@ import {Rocket} from "../src/Rocket.sol";
 import {RocketFactory} from "../src/RocketFactory.sol";
 import {IERC20} from "../src/interfaces/IERC20.sol";
 import {IPolynomialVault} from "../src/interfaces/IPolynomialVault.sol";
+import {IHopSwap} from "../src/interfaces/IHopSwap.sol";
 
 import {ICurveMetaPool} from "./interfaces/ICurveMetaPool.sol";
 
@@ -23,6 +24,8 @@ contract RocketPutSellingTest is Test {
     address USDC = 0x7F5c764cBc14f9669B88837ca1490cCa17c31607;
     address USDT_HOLDER = 0x6ab707Aca953eDAeFBc4fD23bA73294241490620;
     address USDT = 0x94b008aA00579c1307B0EF2c499aD98a8ce58e58;
+    address HUSDC_SWAP = 0x3c0FFAca566fCcfD9Cc95139FEF6CBA143795963;
+    address HUSDC = 0x25D8039bB044dC227f741a9e381CA4cEAE2E6aE8;
     address SETH_PUT_SELLING = 0xb28Df1b71a5b3a638eCeDf484E0545465a45d2Ec;
 
     address user = 0xf601c32B01ACbA505b139330029694Bede296951;
@@ -32,7 +35,9 @@ contract RocketPutSellingTest is Test {
 
     function setUp() public {
         optimismFork = vm.createSelectFork(vm.rpcUrl("optimism"), 21510000);
-        rocketFactory = new RocketFactory(msg.sender);
+        rocketFactory = new RocketFactory(address(this));
+
+        rocketFactory.addMappings(USDC, HUSDC, HUSDC_SWAP);
     }
 
     function assertDepositQueue(address depositedUser) internal {
@@ -55,8 +60,7 @@ contract RocketPutSellingTest is Test {
             SETH_PUT_SELLING,
             user,
             amount,
-            address(0x0),
-            ""
+            address(0x0)
         );
 
         vm.prank(SUSD_HOLDER);
@@ -68,8 +72,7 @@ contract RocketPutSellingTest is Test {
             SETH_PUT_SELLING,
             user,
             amount,
-            address(0x0),
-            ""
+            address(0x0)
         );
 
         Rocket(newRocket).launch(
@@ -93,8 +96,7 @@ contract RocketPutSellingTest is Test {
             SETH_PUT_SELLING,
             user,
             amount,
-            address(0x0),
-            ""
+            address(0x0)
         );
 
         vm.prank(SUSD_HOLDER);
@@ -106,8 +108,7 @@ contract RocketPutSellingTest is Test {
             SETH_PUT_SELLING,
             user,
             amount,
-            address(0x0),
-            ""
+            address(0x0)
         );
 
         Rocket(newRocket).launch(
@@ -140,8 +141,7 @@ contract RocketPutSellingTest is Test {
             SETH_PUT_SELLING,
             user,
             amount,
-            address(CURVE_SUSD_METAPOOL),
-            swapData
+            address(CURVE_SUSD_METAPOOL)
         );
 
         vm.prank(DAI_HOLDER);
@@ -153,8 +153,7 @@ contract RocketPutSellingTest is Test {
             SETH_PUT_SELLING,
             user,
             amount,
-            address(CURVE_SUSD_METAPOOL),
-            swapData
+            address(CURVE_SUSD_METAPOOL)
         );
 
         Rocket(newRocket).launch(
@@ -187,8 +186,7 @@ contract RocketPutSellingTest is Test {
             SETH_PUT_SELLING,
             user,
             amount,
-            address(CURVE_SUSD_METAPOOL),
-            swapData
+            address(CURVE_SUSD_METAPOOL)
         );
 
         vm.prank(USDC_HOLDER);
@@ -200,8 +198,7 @@ contract RocketPutSellingTest is Test {
             SETH_PUT_SELLING,
             user,
             amount,
-            address(CURVE_SUSD_METAPOOL),
-            swapData
+            address(CURVE_SUSD_METAPOOL)
         );
 
         Rocket(newRocket).launch(
@@ -234,8 +231,7 @@ contract RocketPutSellingTest is Test {
             SETH_PUT_SELLING,
             user,
             amount,
-            address(CURVE_SUSD_METAPOOL),
-            swapData
+            address(CURVE_SUSD_METAPOOL)
         );
 
         vm.prank(USDC_HOLDER);
@@ -247,8 +243,7 @@ contract RocketPutSellingTest is Test {
             SETH_PUT_SELLING,
             user,
             amount,
-            address(CURVE_SUSD_METAPOOL),
-            swapData
+            address(CURVE_SUSD_METAPOOL)
         );
 
         Rocket(newRocket).launch(
@@ -264,7 +259,7 @@ contract RocketPutSellingTest is Test {
         assertDepositQueue(user);
     }
 
-    function testCruveUsdt() public {
+    function testCurveUsdt() public {
         uint256 amount = 1e9; // 1000 USDT
         // USDT = index 3, SUSD = index 0
         bytes memory swapData = abi.encodeWithSelector(
@@ -281,8 +276,7 @@ contract RocketPutSellingTest is Test {
             SETH_PUT_SELLING,
             user,
             amount,
-            address(CURVE_SUSD_METAPOOL),
-            swapData
+            address(CURVE_SUSD_METAPOOL)
         );
 
         vm.prank(USDT_HOLDER);
@@ -294,12 +288,62 @@ contract RocketPutSellingTest is Test {
             SETH_PUT_SELLING,
             user,
             amount,
-            address(CURVE_SUSD_METAPOOL),
-            swapData
+            address(CURVE_SUSD_METAPOOL)
         );
 
         Rocket(newRocket).launch(
             USDT,
+            SUSD,
+            SETH_PUT_SELLING,
+            user,
+            amount,
+            address(CURVE_SUSD_METAPOOL),
+            swapData
+        );
+
+        assertDepositQueue(user);
+    }
+
+    function testCurveHusdc() public {
+        uint256 amount = 1e9; // 1000 hUSDC
+
+        address predictedAddress = rocketFactory.getAddressFor(
+            USDC,
+            SUSD,
+            SETH_PUT_SELLING,
+            user,
+            amount,
+            address(CURVE_SUSD_METAPOOL)
+        );
+
+        vm.prank(HUSDC_SWAP);
+        IERC20(HUSDC).transfer(predictedAddress, amount);
+
+        address payable newRocket = rocketFactory.deploy(
+            USDC,
+            SUSD,
+            SETH_PUT_SELLING,
+            user,
+            amount,
+            address(CURVE_SUSD_METAPOOL)
+        );
+
+        uint256 expectedAmount = IHopSwap(HUSDC_SWAP).calculateSwap(
+            1,
+            0,
+            amount
+        );
+
+        bytes memory swapData = abi.encodeWithSelector(
+            ICurveMetaPool.exchange_underlying.selector,
+            2,
+            0,
+            expectedAmount,
+            0
+        );
+
+        Rocket(newRocket).swapAndLaunch(
+            USDC,
             SUSD,
             SETH_PUT_SELLING,
             user,

@@ -45,8 +45,7 @@ contract Rocket {
                         vault,
                         user,
                         amount,
-                        swapTarget,
-                        swapData
+                        swapTarget
                     )
                 ),
             "SALT_MISMATCH"
@@ -85,6 +84,25 @@ contract Rocket {
         address swapTarget,
         bytes memory swapData
     ) external {
+        require(
+            salt ==
+                keccak256(
+                    abi.encode(
+                        incomingToken,
+                        depositToken,
+                        vault,
+                        user,
+                        amount,
+                        swapTarget
+                    )
+                ),
+            "SALT_MISMATCH"
+        );
+        require(
+            swapTarget != address(0x0) && swapData.length > 0,
+            "INVALID_REQUEST"
+        );
+
         IERC20 hToken = IERC20(factory.hTokens(incomingToken));
         IHopSwap hSwap = IHopSwap(factory.hSwaps(incomingToken));
 
@@ -92,20 +110,22 @@ contract Rocket {
         hToken.approve(address(hSwap), balance);
         hSwap.swap(1, 0, balance, 0, block.timestamp + 600);
 
+        uint256 msgValue;
+
         if (incomingToken == ETH) {
             uint256 wethReceived = WETH.balanceOf(address(this));
             WETH.withdraw(wethReceived);
+            msgValue = wethReceived;
+        } else {
+            IERC20(incomingToken).approve(swapTarget, amount);
         }
 
-        launch(
-            incomingToken,
-            depositToken,
-            vault,
-            user,
-            amount,
-            swapTarget,
-            swapData
-        );
+        (bool success, ) = swapTarget.call{value: msgValue}(swapData);
+        require(success);
+
+        uint256 depositAmount = IERC20(depositToken).balanceOf(address(this));
+        IERC20(depositToken).approve(vault, depositAmount);
+        IPolynomialVault(vault).initiateDeposit(user, depositAmount);
     }
 
     function rescue(

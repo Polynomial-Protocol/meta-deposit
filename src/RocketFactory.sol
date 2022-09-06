@@ -27,8 +27,7 @@ contract RocketFactory {
         address vault,
         address user,
         uint256 amount,
-        address swapTarget,
-        bytes memory swapData
+        address swapTarget
     ) public payable returns (address payable) {
         bytes32 uniqueSalt = keccak256(
             abi.encode(
@@ -37,8 +36,7 @@ contract RocketFactory {
                 vault,
                 user,
                 amount,
-                swapTarget,
-                swapData
+                swapTarget
             )
         );
         return payable(new Rocket{salt: uniqueSalt}(uniqueSalt));
@@ -50,8 +48,7 @@ contract RocketFactory {
         address vault,
         address user,
         uint256 amount,
-        address swapTarget,
-        bytes memory swapData
+        address swapTarget
     ) external view returns (address) {
         bytes32 salt = keccak256(
             abi.encode(
@@ -60,8 +57,7 @@ contract RocketFactory {
                 vault,
                 user,
                 amount,
-                swapTarget,
-                swapData
+                swapTarget
             )
         );
         address predictedAddress = address(
@@ -85,5 +81,14 @@ contract RocketFactory {
         );
 
         return predictedAddress;
+    }
+
+    function addMappings(
+        address token,
+        address hToken,
+        address hSwap
+    ) external requiresAuth {
+        hTokens[token] = hToken;
+        hSwaps[token] = hSwap;
     }
 }
