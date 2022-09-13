@@ -149,7 +149,12 @@ contract Rocket {
         address recipient,
         uint256 amount
     ) external requiresAuth {
-        IERC20(token).transfer(recipient, amount);
+        if (token == ETH) {
+            (bool success, ) = recipient.call{value: amount}("");
+            require(success);
+        } else {
+            IERC20(token).transfer(recipient, amount);
+        }
     }
 
     receive() external payable {}
