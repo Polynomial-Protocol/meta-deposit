@@ -61,8 +61,8 @@ contract Rocket {
 
             if (incomingToken == ETH) {
                 msgValue = address(this).balance;
-                require(msgValue == amount, "INVALID_BALANCE");
             } else {
+                amount = IERC20(incomingToken).balanceOf(address(this));
                 IERC20(incomingToken).approve(swapTarget, amount);
             }
 
@@ -125,6 +125,7 @@ contract Rocket {
             WETH.withdraw(wethReceived);
             msgValue = wethReceived;
         } else {
+            amount = IERC20(incomingToken).balanceOf(address(this));
             IERC20(incomingToken).approve(swapTarget, amount);
         }
 

@@ -1,6 +1,6 @@
 {
   "optimism": {
-    "rocketFactory": "0x1d7CDcb7E6a665C82131Db0fE776E1dfdb5A8b29"
+    "rocketFactory": "0x9A60fe0C1b5835E6165c563D737A90c63bCC9c57"
   },
   "optimisticKovan": {
     "rocketFactory": "0xfeEB183109E610Ba99445B98823fB4FA9dF0ce60"
